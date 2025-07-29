@@ -1,0 +1,243 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: QuizApp(),
+    );
+  }
+}
+
+class QuizApp extends StatefulWidget {
+  const QuizApp({super.key});
+
+  @override
+  State createState() => _QuizAppState();
+}
+
+class _QuizAppState extends State {
+  List<Map> allQuestions = [
+    {
+      'question': "Which country won the FIFA World Cup 2022?",
+      'options': ['Argentina', 'Brazil', 'Germany', 'France'],
+      'correctAnswer': 0,
+    },
+    {
+      'question': "In cricket, how many players are there in a team?",
+      'options': ['10', '9', '12', '11'],
+      'correctAnswer': 3,
+    },
+    {
+      'question': "Who holds the record for the most Olympic gold medals?",
+      'options': ['Usain Bolt', 'Michael Phelps', 'Carl Lewis', 'Mark Spitz'],
+      'correctAnswer': 1,
+    },
+    {
+      'question': "Which country invented the sport of table tennis?",
+      'options': ['China', 'Japan', 'England', 'Germany'],
+      'correctAnswer': 2,
+    },
+    {
+      'question': "In Formula 1, what does the term DRS stand for?",
+      'options': [
+        'Dynamic Racing System',
+        'Drag Reduction System',
+        'Direct Racing Speed',
+        'Drift Racing System'
+      ],
+      'correctAnswer': 1,
+    },
+  ];
+
+  int currentQuestionIndex = 0;
+  int selectedAnswerIndex = -1;
+  bool isQuestionPage = true;
+  int score = 0;
+
+  Color getButtonColor(int index) {
+    if (selectedAnswerIndex == -1) {
+      return Colors.white; 
+    } else if (index == allQuestions[currentQuestionIndex]['correctAnswer']) {
+      return Colors.green; 
+    } else if (index == selectedAnswerIndex) {
+      return Colors.red; 
+    } else {
+      return Colors.white; 
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return quizAppPage();
+  }
+
+  Scaffold quizAppPage() {
+    if (isQuestionPage == true) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          title: const Text(
+            "QuizApp",
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          centerTitle: true,
+        ),
+        backgroundColor: Colors.white,
+        body: Column(
+          children: [
+            const SizedBox(height: 20),
+            Text(
+              "Question ${currentQuestionIndex + 1}/${allQuestions.length}",
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                allQuestions[currentQuestionIndex]['question'],
+                style: const TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 30),
+
+            
+            for (int i = 0; i < 4; i++) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: SizedBox(
+                  width: 300,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: getButtonColor(i),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(color: Colors.black, width: 1),
+                      ),
+                    ),
+                    onPressed: () {
+                      if (selectedAnswerIndex == -1) {
+                        selectedAnswerIndex = i;
+
+                        
+                        if (selectedAnswerIndex ==
+                            allQuestions[currentQuestionIndex]['correctAnswer']) {
+                          score++;
+                        }
+
+                        setState(() {});
+                      }
+                    },
+                    child: Text(
+                      allQuestions[currentQuestionIndex]['options'][i],
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black, 
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ]
+          ],
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            if (selectedAnswerIndex != -1) {
+              if (currentQuestionIndex < allQuestions.length - 1) {
+                currentQuestionIndex++;
+                selectedAnswerIndex = -1;
+              } else {
+                isQuestionPage = false;
+              }
+              setState(() {});
+            }
+          },
+          backgroundColor: Colors.black,
+          label: const Text(
+            "Next",
+            style: TextStyle(fontSize: 18, color: Colors.white),
+          ),
+        ),
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          centerTitle: true,
+          title: const Text(
+            "Result Screen",
+            style: TextStyle(fontSize: 28, color: Colors.white),
+          ),
+        ),
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.network(
+                "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+                width: 150,
+                height: 150,
+              ),
+              const SizedBox(height: 30),
+              const Text(
+                "🎉 Congratulations 🎉",
+                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "You scored: $score / ${allQuestions.length}",
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  setState(() {
+                    currentQuestionIndex = 0;
+                    selectedAnswerIndex = -1;
+                    isQuestionPage = true;
+                    score = 0;
+                  });
+                },
+                child: const Text(
+                  "Restart Quiz",
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    }
+  }
+}
